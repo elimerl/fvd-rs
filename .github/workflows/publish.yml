@@ -17,6 +17,8 @@ jobs:
               with:
                   version: 8
             - run: pnpm install --frozen-lockfile
+              working-directory: ./pkg
             - run: pnpm publish
+              working-directory: ./pkg
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
