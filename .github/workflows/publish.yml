@@ -27,7 +27,3 @@ jobs:
               working-directory: pkg
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            - name: Cache
-              uses: actions/cache@v4
-              with:
-                  key: ${{ runner.os }}
