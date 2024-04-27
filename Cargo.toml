@@ -3,7 +3,7 @@ name = "fvd-rs"
 version = "0.1.0"
 edition = "2021"
 license = "MIT"
-repository = "https://github.com/elimerl/fvd-rs"
+repository = "https://github.com/elimerl/fvd-rs.git"
 description = "Rust library for forcevector.app."
 
 [dependencies]

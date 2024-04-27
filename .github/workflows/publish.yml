@@ -12,12 +12,11 @@ jobs:
             - uses: actions/setup-node@v4
               with:
                   node-version: "20.x"
-                  registry-url: "https://npm.pkg.github.com"
             - uses: pnpm/action-setup@v3
               with:
                   version: 8
-            - run: cat ~/.npmrc
             - run: ./build.sh
+            - run: echo @elimerl:registry=https://npm.pkg.github.com > ~/.npmrc
             - run: pnpm install --frozen-lockfile
               working-directory: pkg
             - run: pnpm publish
