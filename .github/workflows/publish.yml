@@ -16,7 +16,7 @@ jobs:
             - uses: pnpm/action-setup@v3
               with:
                   version: 8
-            - run: echo ~/.npmrc
+            - run: cat ~/.npmrc
             - run: ./build.sh
             - run: pnpm install --frozen-lockfile
               working-directory: pkg
