@@ -30,7 +30,7 @@ impl Track {
         let mut len_accum = 0.0;
         for spline in &splines {
             section_start.push(len_accum);
-            len_accum += spline.points.last().unwrap().time;
+            len_accum += spline.total_distance();
         }
         let points = splines
             .iter()
