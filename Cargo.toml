@@ -1,0 +1,28 @@
+[package]
+name = "fvd-rs"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+glam = { version = "0.27.0", features = ["serde"] }
+serde = { version = "1.0.198", features = ["derive"] }
+serde_json = "1.0.116"
+
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+console_error_panic_hook = "0.1.7"
+wasm-bindgen = "0.2"
+
+[dev-dependencies]
+criterion = { version = "0.4", features = ["html_reports"] }
+
+[[bench]]
+name = "week_11_spline"
+harness = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+lto = true
