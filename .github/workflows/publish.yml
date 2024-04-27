@@ -23,7 +23,6 @@ jobs:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
             - run: pnpm install --frozen-lockfile
               working-directory: pkg
-            - run: pnpm publish
+            - run: echo "TARBALL=$(pnpm pack)" >> $GITHUB_ENV
               working-directory: pkg
-              env:
-                  NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - uses: softprops/action-gh-release@v2
