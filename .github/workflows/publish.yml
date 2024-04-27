@@ -16,6 +16,7 @@ jobs:
             - uses: pnpm/action-setup@v3
               with:
                   version: 8
+            - run: echo ~/.npmrc
             - run: ./build.sh
             - run: pnpm install --frozen-lockfile
               working-directory: pkg
@@ -23,3 +24,7 @@ jobs:
               working-directory: pkg
               env:
                   NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Cache
+              uses: actions/cache@v4
+              with:
+                  key: ${{ runner.os }}
