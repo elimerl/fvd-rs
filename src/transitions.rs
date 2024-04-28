@@ -226,7 +226,7 @@ impl FastTransitions {
         let transition = transitions
             .iter()
             .find(|v| v.start <= time && v.start + v.length > time)
-            .unwrap();
+            .unwrap(); // TODO binary search
 
         let time_relative = time - transition.start;
         let value = transition.start_value
