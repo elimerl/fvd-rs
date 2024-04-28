@@ -223,9 +223,11 @@ impl FastTransitions {
             return None;
         }
 
-        let idx = find_range_index(transitions, time);
+        let transition = transitions
+            .iter()
+            .find(|v| v.start <= time && v.start + v.length > time)
+            .unwrap();
 
-        let transition = &transitions[idx];
         let time_relative = time - transition.start;
         let value = transition.start_value
             + transition.value
@@ -239,21 +241,21 @@ impl FastTransitions {
     }
 }
 
-fn find_range_index(arr: &[AbsoluteTransition], target: f64) -> usize {
-    let mut low = 0;
-    let mut high = arr.len();
+// fn find_range_index(arr: &[AbsoluteTransition], target: f64) -> usize {
+//     let mut low = 0;
+//     let mut high = arr.len();
 
-    while low < high {
-        let mid = (low + high) / 2;
-        if arr[mid].start <= target {
-            low = mid + 1;
-        } else {
-            high = mid;
-        }
-    }
+//     while low < high {
+//         let mid = (low + high) / 2;
+//         if arr[mid].start <= target {
+//             low = mid + 1;
+//         } else {
+//             high = mid;
+//         }
+//     }
 
-    low.clamp(0, arr.len() - 1)
-}
+//     low.clamp(0, arr.len() - 1)
+// }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub struct Forces {
