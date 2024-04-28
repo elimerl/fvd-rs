@@ -240,9 +240,6 @@ impl FastTransitions {
 }
 
 fn find_range_index(arr: &[AbsoluteTransition], target: f64) -> usize {
-    if arr.len() <= 1 {
-        return 0;
-    }
     let mut low = 0;
     let mut high = arr.len();
 
