@@ -74,7 +74,6 @@ pub struct Transition {
     pub length: f64,
     pub center: f64,
     pub tension: f64,
-    pub dynamic_length: bool,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -128,6 +127,135 @@ impl Transitions {
 
         Some(Forces { vert, lat, roll })
     }
+}
+
+struct AbsoluteTransition {
+    pub curve: TransitionCurve,
+    pub value: f64,
+    pub start_value: f64,
+    pub start: f64,
+    pub length: f64,
+    pub center: f64,
+    pub tension: f64,
+}
+
+pub struct FastTransitions {
+    vert: Vec<AbsoluteTransition>,
+    lat: Vec<AbsoluteTransition>,
+    roll: Vec<AbsoluteTransition>,
+    pub length: f64,
+}
+
+impl FastTransitions {
+    pub fn new(transitions: &Transitions) -> Self {
+        let mut vert = Vec::new();
+        let mut lat = Vec::new();
+        let mut roll = Vec::new();
+
+        let mut time_accum = 0.0;
+        let mut value_accum = 0.0;
+
+        for transition in transitions.vert.iter() {
+            vert.push(AbsoluteTransition {
+                curve: transition.curve,
+                value: transition.value,
+                start_value: value_accum,
+                start: time_accum,
+                length: transition.length,
+                center: transition.center,
+                tension: transition.tension,
+            });
+            value_accum += transition.value * transition.curve.eval(1.0);
+            time_accum += transition.length;
+        }
+        time_accum = 0.0;
+        value_accum = 0.0;
+        for transition in transitions.lat.iter() {
+            lat.push(AbsoluteTransition {
+                curve: transition.curve,
+                value: transition.value,
+                start_value: value_accum,
+                start: time_accum,
+                length: transition.length,
+                center: transition.center,
+                tension: transition.tension,
+            });
+            value_accum += transition.value * transition.curve.eval(1.0);
+            time_accum += transition.length;
+        }
+        time_accum = 0.0;
+        value_accum = 0.0;
+        for transition in transitions.roll.iter() {
+            roll.push(AbsoluteTransition {
+                curve: transition.curve,
+                value: transition.value,
+                start_value: value_accum,
+                start: time_accum,
+                length: transition.length,
+                center: transition.center,
+                tension: transition.tension,
+            });
+            value_accum += transition.value * transition.curve.eval(1.0);
+            time_accum += transition.length;
+        }
+
+        Self {
+            vert,
+            lat,
+            roll,
+            length: transitions.length(),
+        }
+    }
+
+    pub fn evaluate(&self, time: f64) -> Option<Forces> {
+        if time < 0.0 || time >= self.length {
+            return None;
+        }
+        Some(Forces {
+            vert: self.evaluate_single(&self.vert, time)?,
+            lat: self.evaluate_single(&self.lat, time)?,
+            roll: self.evaluate_single(&self.roll, time)?,
+        })
+    }
+
+    fn evaluate_single(&self, transitions: &[AbsoluteTransition], time: f64) -> Option<f64> {
+        if time < 0.0 || time >= self.length {
+            return None;
+        }
+
+        let idx = find_range_index(transitions, time);
+
+        let transition = &transitions[idx];
+        let time_relative = time - transition.start;
+        let value = transition.start_value
+            + transition.value
+                * transition.curve.eval_timewarp(
+                    time_relative / transition.length,
+                    transition.center,
+                    transition.tension,
+                );
+
+        Some(value)
+    }
+}
+
+fn find_range_index(arr: &[AbsoluteTransition], target: f64) -> usize {
+    if arr.len() <= 1 {
+        return 0;
+    }
+    let mut low = 0;
+    let mut high = arr.len();
+
+    while low < high {
+        let mid = (low + high) / 2;
+        if arr[mid].start <= target {
+            low = mid + 1;
+        } else {
+            high = mid;
+        }
+    }
+
+    low.clamp(0, arr.len() - 1)
 }
 
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]

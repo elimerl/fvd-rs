@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     constants::{DT, G},
-    transitions::{Forces, Transitions},
+    transitions::{FastTransitions, Forces, Transitions},
     TrackPoint, TrackSpline,
 };
 
@@ -186,12 +186,10 @@ impl Track {
                 let mut pos = start.pos;
                 let mut rot = start.rot.0;
                 let mut time = 0.0;
-                let transitions_length = transitions.length();
-                while time < transitions.length() {
+                let transitions = FastTransitions::new(transitions);
+                while time < transitions.length {
                     let delta_distance = velocity * DT;
-                    if time >= transitions_length {
-                        break;
-                    }
+
                     if let Some(forces) = transitions.evaluate(time) {
                         let forces = forces + start_forces;
                         let mut next_rot = rot;
