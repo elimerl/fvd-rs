@@ -187,6 +187,8 @@ impl Track {
                 let mut rot = start.rot.0;
                 let mut time = 0.0;
                 let transitions = FastTransitions::new(transitions);
+                spline.points = Vec::with_capacity((transitions.length / DT) as usize);
+
                 while time < transitions.length {
                     let delta_distance = velocity * DT;
 
