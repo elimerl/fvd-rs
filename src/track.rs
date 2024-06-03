@@ -84,7 +84,7 @@ impl Track {
                 let dp = 0.01;
                 let mut pos = start.pos;
                 let mut velocity = start.velocity;
-
+                let mut time = start.time;
                 let mut p = 0.0;
 
                 while p < *length {
@@ -98,7 +98,7 @@ impl Track {
                             pos,
                             rot: start.rot,
                             velocity,
-                            time: p / velocity + start.time,
+                            time,
                         };
                         velocity = track_friction(
                             self.config.parameter,
@@ -112,11 +112,12 @@ impl Track {
                             return spline;
                         }
                     }
+                    time += dp / velocity;
                     spline.points.push(TrackPoint {
                         pos,
                         rot: start.rot,
                         velocity,
-                        time: p / velocity + start.time,
+                        time,
                     });
 
                     p += dp;
