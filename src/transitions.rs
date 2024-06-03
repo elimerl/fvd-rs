@@ -9,6 +9,7 @@ pub enum TransitionCurve {
     Quadratic,
     Cubic,
     Plateau,
+    Sinusoidal,
     QuarticBump,
 }
 
@@ -37,6 +38,7 @@ impl TransitionCurve {
             TransitionCurve::Plateau => {
                 1.0 - (-15.0 * ((1.0 - (2.0 * t - 1.0).abs()).powi(3))).exp()
             }
+            TransitionCurve::Sinusoidal => 0.5 * (1. - (std::f64::consts::PI * t).cos()),
             TransitionCurve::QuarticBump => t * t * (16.0 + t * (-32.0 + t * 16.0)),
         }
     }
