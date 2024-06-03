@@ -141,6 +141,8 @@ impl Track {
 
                 let mut p = 0.0;
 
+                let mut time = start.time;
+
                 while p < angle * radius {
                     let last_point = spline.points.last();
 
@@ -168,11 +170,12 @@ impl Track {
                         }
                     }
                     rot *= DQuat::from_axis_angle(axis, rad_per_m * dp);
+                    time += dp / velocity;
                     spline.points.push(TrackPoint {
                         pos,
                         rot: rot.into(),
                         velocity,
-                        time: p / velocity + start.time,
+                        time,
                     });
 
                     p += dp;
